@@ -56,31 +56,24 @@
     <script>
         $(document).ready(function() {
             // 名字與桌號對應的資料
-            const seatingMap = {
-                "卡比獸28": [
-                    "黃愷翔",
-                    "娟娟阿姨",
-                    "謝莉菁",
-                    "小惠姊",
-                    "廖妤庭"
-                ],
-                "卡比獸29": [
-                    "王美蘭",
-                    "王美玲"
-                ]
-            };
+           const seatingData = [
+                ["主桌(舞台前的雙圈位置)", "黃紹賢", "魏秀春", "黃翠華", "奶奶", "魏永峰"],
+                ["卡比獸28", "黃愷翔", "魏琤琄", "謝莉菁", "小惠姊", "古家偵", "古明惠", "廖妤庭"],
+                ["卡比獸29", "王美蘭", "王美玲", "蕭家宜", "朱玉玲", "陳佳瑋", "黃紹爵", "黃甯雅", "黃思揚"],
+                ["卡比獸30", "王璟妤", "胡思婷", "朱育慧", "小朱", "黃嬿潤", "連淑芬", "林冠逸", "程立涵", "陳如婕", "林昱彣"],
+                ["卡比獸31", "陳薇宇", "許煒駿", "闕源辰", "陳耀峰", "Bob", "許毓珊", "歐承洋", "高詠淓", "高薇婷"],
+                ["卡比獸32", "蕭竹庭", "朱昱僑", "許項涵", "楊秉叡", "雪倫", "陳軒蓉", "陳新", "郭佩宜", "楊詠涵", "勵亞潔"],
+                ["卡比獸33", "郭子嘉", "邱治嘉", "連品倠", "彭約瑟", "楊竣宇", "陳楚恩", "張馨勻", "邱子瑋", "邱季涵"]
+            ];
+            const seatingMap = {};
+            seatingData.forEach(item => {
+                const [table, ...names] = item;
+                names.forEach(name => seatingMap[name] = table);
+            });
+
             $('#search').click(function() {
                 const name = $('#name').val().trim();
-                let tableNumber = "找不到該名字";
-                
-                // 檢查是否有對應的桌號
-                for (const [table, names] of Object.entries(seatingMap)) {
-                    if (names.includes(name)) {
-                        tableNumber = table;
-                        break;
-                    }
-                }
-
+                const tableNumber = seatingMap[name] || "找不到該名字，請檢查名字是否正確！";
                 $('#table-number').text(tableNumber);
             });
         });
