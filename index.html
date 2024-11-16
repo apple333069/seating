@@ -7,80 +7,156 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
     <style>
+        header img {
+            max-width: 70px;
+            height: auto;
+            padding-bottom: 15px;
+        }
         .container {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-        }
-        #form-section {
-            flex: 1 1 50%;
-            max-width: 70%;
-            margin: 10px;
-        }
-        #table-number {
-            font-size: 1.5rem;
-            color: green;
+          font-family: "Helvetica Neue", Arial, sans-serif;
         }
 
-        /* 小螢幕調整 */
-        @media (max-width: 768px) {
-            #seating-chart, #form-section {
-                flex: 1 1 100%;
-                max-width: 100%;
-            }
-            #search {
-                width: 30%;
-            }
+        .fixed-width {
+            width: 25%;
+            min-width: 120px;
+            max-width: 200px;
+        }
+        .right {
+            margin-right: 10px;
+        }
+
+        header h1 {
+            color: #8b4513;
+            font-weight: bold;
+        }
+
+        header p.lead {
+            color: #6c757d;
+        }
+
+        #form-section {
+            max-width: 600px;
+            margin: 0 auto; 
+            border: 1px solid #eaeaea;
+        }
+
+        #search {
+            background-color: #8b4513;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        #search:hover {
+            background-color: #6b3b12;
+        }
+
+        #table-number {
+            color: #dc3545; /* 鮮明的紅色 */
+        }
+
+        #seating-chart img {
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="form-section" class="my-5 p-4">
-            <h3>查找桌號</h3>
+
+    <div class="container text-center">
+        <header class="mt-5 d-flex align-items-center justify-content-center">
+            <img src="images/logo.png" alt="logo" class="me-3">
+            <h4 class="text-secondary mb-0">歡迎參加我們的婚禮</h4>
+        </header>
+        
+        <section id="form-section" class="bg-light mt-3 mb-5 py-4 px-5 rounded shadow">
+            <h5 class="mb-4 text-primary">請輸入名字查找您的桌號</h5>
             <form>
                 <div class="my-3 d-flex flex-column flex-sm-row align-items-center">
                     <input type="text" id="name" class="form-control w-75 mb-3 mb-sm-0" placeholder="輸入名字">
-                    <button type="button" id="search" class="btn btn-primary ms-sm-3 w-sm-50">查找</button>
+                    <button type="button" id="search" class="btn btn-primary ms-sm-3 fixed-width">查找</button>
                 </div>
             </form>
-            <p class="fs-5">桌號：<span id="table-number"></span></p>
-        </div>
-        <div id="seating-chart" class="p-2">
-            <img src="images/1.png" alt="Seating Chart" class="img-fluid">
-        </div>
+            <p class="fs-5 right">桌號：<span id="table-number" class="fw-bold text-danger"></span></p>
+        </section>
+    
+        <section id="seating-chart" class="p-3 bg-white rounded shadow">
+            <h5 class="mb-3 text-secondary">婚禮座位圖</h5>
+            <img src="images/1.png" alt="Seating Chart" class="img-fluid rounded border border-2">
+        </section>
     </div>
+  
 
     <script>
         $(document).ready(function() {
             // 名字與桌號對應的資料
-            const seatingMap = {
-                "卡比獸28": [
-                    "黃愷翔",
-                    "娟娟阿姨",
-                    "謝莉菁",
-                    "小惠姊",
-                    "廖妤庭"
-                ],
-                "卡比獸29": [
-                    "王美蘭",
-                    "王美玲"
-                ]
-            };
+            const seatingData = [
+                ["超可愛", "葉庭瑋", "黃愷婷"],
+                ["主桌", "黃紹賢", "魏秀春", "黃翠華", "奶奶", "魏永峰", "葉成和", "林麗淑", "葉福來", "林建良", "陳月琴"],
+                ["4", "劉陳惇美", "王欣寛", "王源安", "李碧惠", "張聰輝", "留得泉", "鮑慶生"],
+                ["5", "陳德昌", "柯良雄", "廖心泉", "陳瑞源", "朱世嵩", "林純如", "黃中淵"],
+                ["6", "林有盛", "羅邱美鳳", "邱茂誠", "林忠鍵", "許漢輝"],
+                ["7", "呂正欽", "許文正", "包春月", "林炎聰", "許永霖"],
+                ["8", "陳林月照", "王瑞榮", "林雪玉", "羅朝富", "吳秀鳳", "童建ㄧ", "劉紅鵑"],
+                ["9", "吳素貞", "吳廷貴", "王旺根", "謝江西", "洪秀雲"],
+                ["10", "黃秋男", "吳陳屘", "辜春忠", "許文財", "謝振銘", "李榮財"],
+                ["11", "羅友明", "簡誌銘", "李府倉", "林永嵩", "劉邦森"],
+                ["12", "胡景良", "鐘金盛", "賴玉梅", "簡柑", "林陳月娥", "黃玉珍", "籃松輝*2", "呂碧霞"],        
+                ["13", "鄭文典", "賴樹奎", "林漢慰", "林義成", "朗知慎", "王裕"],
+                ["14", "楊林春勸", "陳美藝", "楊東誠", "楊西蓮", "蘇淑嫻", "胡德國"],
+                ["16", "劉協豐", "彭浚銘", "李俊隆", "劉清松", "周永順", "侯明量", "王榮盛"],
+                ["17", "謝素珠", "簡燕祿", "簡燕東", "陳福倉", "楊炳煌", "陳森銘"],
+                ["18", "張琇蘭", "林炎盛", "蕭正義", "曾米秀", "李麒麟", "徐圓妹", "林梅蘭"],
+                ["19", "莊佳慧", "林沛淇", "林沛淋", "葉獻文", "宋佳蓁", "劉佳寧", "王彩心", "葉泰辰"],
+                ["20", "陳勝雄", "許百合", "邱蜜子", "林彥伶", "游証傑", "江金川", "張登貴"],
+                ["21", "林春進", "林弈勝", "林瑞徵", "黃聖荃"],
+                ["22", "鐘小黑", "黃春明", "陳進發", "戴寬利", "陳德財"],
+                ["23", "木柵宗保", "葉明添", "劉家霖", "李愛玉", "葉俊廷", "張銅", "張嘉勝"],
+                ["24", "王炳昆", "張文瑞", "林美珠", "何智良", "林建生"],
+                ["25", "黃幸福", "葉明開", "項湖", "許春隆", "黃玲鈺", "莊新發", "黃信明"],
+                ["26", "吳壽嵩", "高昆和", "何廣忠", "劉清淋", "簡燕青", "劉次郎", "洪秀蘭"],
+                ["27", "何文德", "陳鳳珠", "蕭雄賓", "湯國賓", "謝慧靜"],
+                ["28", "黃愷翔", "魏琤琄", "謝莉菁", "小惠姊", "古家偵", "古明惠", "廖妤庭"],
+                ["29", "王美蘭", "王美玲", "蕭家宜", "朱玉玲", "陳佳瑋", "黃紹爵", "黃甯雅", "黃思揚"],
+                ["30", "王璟妤", "胡思婷", "朱育慧", "小朱", "黃嬿潤", "連淑芬", "林冠逸", "程立涵", "陳如婕", "林昱彣"],
+                ["31", "陳薇宇", "許煒駿", "闕源辰", "陳耀峰", "Bob", "許毓珊", "歐承洋", "高詠淓", "高薇婷"],
+                ["32", "蕭竹庭", "朱昱僑", "許項涵", "楊秉叡", "雪倫", "陳軒蓉", "陳新", "郭佩宜", "楊詠涵", "勵亞潔"],
+                ["33", "郭子嘉", "邱治嘉", "連品倠", "彭約瑟", "楊竣宇", "陳楚恩", "張馨勻", "邱子瑋", "邱季涵"],
+                ["34", "楊曜鴻", "李東樺", "黃聖翔", "汪逸承", "鄧凱文", "張翔勝"],
+                ["35", "余俊頡", "林偉凱", "池彥龍", "方子碩", "林奕良", "許紘銘"],
+                ["36", "曾瑞傑", "林少賢", "龎家翔", "江明達", "蕭凱強", "鍾宏賢", "王凱弘", "魏紹丞"],
+                ["37", "謝慶認", "呂光馨", "黃正師", "林斯偉", "洪宗狄", "呂金財"],
+                ["38", "文福諒","王忠正", "施振隆", "吳松淡", "吳文賢", "施慶桔"],
+                ["39", "陳登波", "陳震緯", "蔡文桐", "葉再生", "高德南"],
+                ["40", "徐貞雄", "李阿葉", "張鋒添", "劉益守", "林義家"],
+                ["41", "葉福成", "陳雪嬌", "李財義", "葉紅柑", "葉紅棗", "葉偉婷"],
+                ["42", "蘇峻崤", "許燕鴻", "高訓德", "高素珠", "王正雄"],
+                ["43", "林陳鳳娥", "周日用", "張茂陽", "莊敏豐", "游淑芬", "楊誕敷", "王淑美"],
+                ["44", "王明發", "王秉穎", "呂金城", "林坤培", "許騰翔", "林可真"],
+                ["45", "張重寶", "張盈禎", "莊國男"],
+                ["46", "廖長湖", "劉秀霞", "吳耀旻", "張京洲", "林黃娥", "林可芳"],
+                ["47", "曾太吉", "何彥鋒", "陳健雄", "廖貴隆", "林俊材", "陳萬卿", "李俊德"],
+                ["48", "王家敏", "林明田", "鄭詩川", "吳禹辰", "林明勝", "林南鎮", "張家偉", "張文彬"],
+                ["49", "蔡茂常", "蔡安順", "林俊宏", "張康傳", "辜新福"],
+                ["50", "林炎昇", "鄭德村", "鄭百軒", "鄭文村", "林進祿", "林雲祥", "楊長榮", "張國銘"],
+                ["51", "林振豐", "黃中山", "詹明川", "張英仁", "曾憲龍", "林忠信"],
+                ["52", "廖國慶", "廖眾域", "林世銘", "劉海濤", "洪勝明"],
+                ["53", "張永富", "高勝專", "林士均", "羅朝永", "劉佳漢", "林峻弘", "葉日森"],
+                ["54", "楊子龍", "曾榮勝", "彭琪真", "廖彥哲", "吳國裕", "郭義勇"],
+                ["55", "鄭致能", "周政軍", "林錦妙", "李貽謀", "莊奕輝", "蔡本元", "葉慶厚", "黃秀正", "梁文相"],
+                ["56", "林聰明", "蘇炎山", "洪啟德", "林智賢", "徐淑英"],
+                ["57", "林永寧", "呂政霖", "張忠孝", "王嘉琳", "林文宗", "郭慶龍", "王子輝"],
+                ["58", "吳嘉坤", "吳清傳", "林文龍", "吳明德", "林順福"],
+                ["59", "陳福欽", "程皇錡", "蔡佳均", "羅建棟", "陳威旭"],
+                ["60", "廖昭松", "廖啟勝", "戴清風", "闕建發", "李秋男", "李文龍", "楊振忠"]
+            ];
+            const seatingMap = {};
+            seatingData.forEach(item => {
+                const [table, ...names] = item;
+                names.forEach(name => seatingMap[name] = table);
+            });
+
             $('#search').click(function() {
                 const name = $('#name').val().trim();
-                let tableNumber = "找不到該名字";
-                
-                // 檢查是否有對應的桌號
-                for (const [table, names] of Object.entries(seatingMap)) {
-                    if (names.includes(name)) {
-                        tableNumber = table;
-                        break;
-                    }
-                }
-
+                const tableNumber = seatingMap[name] || "找不到該名字，請檢查名字是否正確！";
                 $('#table-number').text(tableNumber);
             });
         });
